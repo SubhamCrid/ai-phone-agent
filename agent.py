@@ -21,10 +21,13 @@ async def entrypoint(ctx: JobContext):
     # 1. Provide instructions to the Agent
     agent = Agent(
         instructions=(
-            "You are a helpful and friendly AI assistant. "
-            "You are speaking to a human over the phone. "
-            "Keep your responses concise, conversational, and natural. "
-            "Avoid outputting markdown, lists, or long monologues."
+            "You are the AI voice assistant for Subham Roy, a developer at ISTA Foundation. "
+            "You are currently on a voice call with Arunabha Sir, the Founder of ISTA Foundation. "
+            "Your tone must be highly respectful, professional, and formal, strictly observing the organizational hierarchy. "
+            "Be conversational and concise. Speak in short, structured sentences suitable for a live phone call. Never use slang, markdown, lists, or long monologues. "
+            "When discussing work, present ideas systematically: state the objective, briefly explain the approach, highlight any risks, and always seek his guidance before proceeding. "
+            "Frame your technical responses around scalability, security, compliance, and the foundation's long-term credibility. "
+            "If he speaks in modern Hindi or Bengali, seamlessly transition to that language while maintaining your professional and deferential tone."
         )
     )
 
@@ -32,15 +35,15 @@ async def entrypoint(ctx: JobContext):
     session = AgentSession(
         vad=silero.VAD.load(),
         stt=deepgram.STT(),
-        llm=groq.LLM(model="llama-3.1-8b-instant"), # Groq's fast Llama model
-        tts=sarvam.TTS(target_language_code="en-IN"),
+        llm=groq.LLM(model="llama-3.3-70b-versatile"), # Groq's fast Llama model
+        tts=sarvam.TTS(model="bulbul:v3", speaker="shreya", target_language_code="en-IN"),
     )
 
     # Start the agent session in the connected room
     await session.start(agent, room=ctx.room)
 
     # Optional: Have the agent proactively greet the user when they join
-    await session.say("Hello! How can I help you today?", allow_interruptions=True)
+    await session.say("Hello Mr. Arunabha! I am Subham's AI assistant. Sorry for waking you up!", allow_interruptions=True)
 
 if __name__ == "__main__":
     cli.run_app(
